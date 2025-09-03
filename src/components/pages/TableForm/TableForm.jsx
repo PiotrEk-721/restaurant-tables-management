@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import { getTableById, updateTableRequest } from '../../../redux/tablesRedux.js';
+import PropTypes from 'prop-types';
 import styles from './TableForm.module.scss';
 import InputNumber from '../../common/InputNumber/InputNumber.jsx';
 
@@ -21,20 +22,19 @@ const TableForm = () => {
   const [isUpdated, setIsUpdated] = useState(false);
 
   useEffect(() => {
-    if (tableData) {
-      setStatus(tableData.status);
-      setPeopleAmount(tableData.peopleAmount);
-      setMaxPeopleAmount(tableData.maxPeopleAmount);
-      setBill(tableData.bill);
-      setIsLoading(false);
-    }
-  }, [tableData]);
+  if (tableData) {
+    setStatus(tableData.status);
+    setPeopleAmount(tableData.peopleAmount);
+    setMaxPeopleAmount(tableData.maxPeopleAmount);
+    setBill(tableData.bill);
+  }
+}, [tableData]);
 
   useEffect(() => {
-    if (!isLoading && !tableData) {
+    if (!tableData) {
       navigate('/');
     }
-  }, [isLoading, tableData, navigate]);
+  }, [tableData, navigate]);
 
   useEffect(() => {
     if (status === 'Free' || status === 'Cleaning') {
@@ -44,6 +44,11 @@ const TableForm = () => {
       setBill(0);
     }
   }, [status]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -151,6 +156,15 @@ const TableForm = () => {
       )}
     </section>
   );
+};
+
+TableForm.propTypes = {
+  tableId: PropTypes.string.isRequired,
+  tableData: PropTypes.array.isRequired,
+  status: PropTypes.string.isRequired,
+  peopleAmount: PropTypes.number.isRequired,
+  maxPeopleAmount: PropTypes.number.isRequired,
+  bill: PropTypes.number.isRequired,
 };
 
 export default TableForm;

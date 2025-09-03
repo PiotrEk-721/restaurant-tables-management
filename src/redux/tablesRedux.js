@@ -1,5 +1,6 @@
 import shortid from 'shortid';
 import initialState from './initialState';
+import { API_URL } from '../config.js';
 
 // actions
 const createActionName = (actionName) => `app/tables/${actionName}`;
@@ -17,7 +18,7 @@ export const updateTable = (payload) => ({
 });
 export const fetchTables = () => {
   return (dispatch) => {
-    fetch('http://localhost:3131/api/tables')
+    fetch(`${API_URL}/tables`)
       .then((res) => res.json())
       .then((tables) => dispatch({ type: FETCH_TABLES, payload: tables }));
   };
@@ -33,7 +34,7 @@ export const updateTableRequest = (table) => {
       body: JSON.stringify(table),
     };
 
-    fetch(`http://localhost:3131/api/tables/${table.id}`, options).then(() => dispatch(updateTable(table)));
+    fetch(`${API_URL}/tables/${table.id}`, options).then(() => dispatch(updateTable(table)));
   };
 };
 
