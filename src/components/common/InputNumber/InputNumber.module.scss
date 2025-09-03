@@ -1,0 +1,9 @@
+@import '../../../styles/settings.scss';
+
+.input {
+    width: 50px;
+    height: 40px;
+    border: 1px solid lighten($color-dark, 65%);
+    border-radius: 5px;
+    text-align: center;
+}

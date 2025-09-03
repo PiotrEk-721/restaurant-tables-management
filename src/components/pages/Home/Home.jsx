@@ -9,8 +9,8 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000); // 1 sekunda
-    return () => clearTimeout(timer); // czyścimy timer przy odmontowaniu komponentu
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -22,7 +22,7 @@ const Home = () => {
       ) : (
         <Stack gap={3}>
           {tables.map((table) => (
-            <TableItem id={table.id} status={table.status} />
+            <TableItem key={table.id} id={table.id} status={table.status} />
           ))}
         </Stack>
       )}
