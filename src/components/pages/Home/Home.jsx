@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { getAllTables } from '../../../redux/tablesRedux.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchTables, getAllTables } from '../../../redux/tablesRedux.js';
 import TableItem from '../TableItem/TableItem.jsx';
 import { Stack } from 'react-bootstrap';
 
 const Home = () => {
+  const dispatch = useDispatch();
   const tables = useSelector(getAllTables);
   const [loading, setLoading] = useState(true);
 
@@ -13,10 +14,11 @@ const Home = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => dispatch(fetchTables()), [dispatch]);
+
   return (
     <main>
       <h2 className="fs-1 pt-4 pb-2">All tables</h2>
-
       {loading ? (
         <div className="fs-4 text-muted">Loading...</div>
       ) : (

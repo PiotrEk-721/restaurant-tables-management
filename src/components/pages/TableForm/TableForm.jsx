@@ -2,30 +2,39 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Form, Row, Col } from 'react-bootstrap';
-import { getTableById, updateTable } from '../../../redux/tablesRedux';
-import PropTypes from 'prop-types';
+import { getTableById, updateTableRequest } from '../../../redux/tablesRedux.js';
 import styles from './TableForm.module.scss';
 import InputNumber from '../../common/InputNumber/InputNumber.jsx';
 
 const STATUSES = ['Free', 'Reserved', 'Busy', 'Cleaning'];
 
 const TableForm = () => {
-  const { tableId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { tableId } = useParams();
   const tableData = useSelector((state) => getTableById(state, tableId));
-  const [status, setStatus] = useState(tableData.status);
-  const [peopleAmount, setPeopleAmount] = useState(tableData.peopleAmount);
-  const [maxPeopleAmount, setMaxPeopleAmount] = useState(tableData.maxPeopleAmount);
-  const [bill, setBill] = useState(tableData.bill);
+  const [status, setStatus] = useState('');
+  const [peopleAmount, setPeopleAmount] = useState(0);
+  const [maxPeopleAmount, setMaxPeopleAmount] = useState(0);
+  const [bill, setBill] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdated, setIsUpdated] = useState(false);
 
   useEffect(() => {
-    if (!tableData) {
+    if (tableData) {
+      setStatus(tableData.status);
+      setPeopleAmount(tableData.peopleAmount);
+      setMaxPeopleAmount(tableData.maxPeopleAmount);
+      setBill(tableData.bill);
+      setIsLoading(false);
+    }
+  }, [tableData]);
+
+  useEffect(() => {
+    if (!isLoading && !tableData) {
       navigate('/');
     }
-  }, [tableData, navigate]);
+  }, [isLoading, tableData, navigate]);
 
   useEffect(() => {
     if (status === 'Free' || status === 'Cleaning') {
@@ -36,20 +45,15 @@ const TableForm = () => {
     }
   }, [status]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
   const handleSubmit = (event) => {
     event.preventDefault();
     dispatch(
-      updateTable({
+      updateTableRequest({
         id: tableId,
         status,
         peopleAmount: Number(peopleAmount),
         maxPeopleAmount: Number(maxPeopleAmount),
-        bill: status === 'busy' ? Number(bill) : 0,
+        bill: status === 'Busy' ? Number(bill) : 0,
       })
     );
     setIsUpdated(true);
@@ -147,15 +151,6 @@ const TableForm = () => {
       )}
     </section>
   );
-};
-
-TableForm.propTypes = {
-  tableId: PropTypes.string.isRequired,
-  tableData: PropTypes.array.isRequired,
-  status: PropTypes.string.isRequired,
-  peopleAmount: PropTypes.number.isRequired,
-  maxPeopleAmount: PropTypes.number.isRequired,
-  bill: PropTypes.number.isRequired,
 };
 
 export default TableForm;
